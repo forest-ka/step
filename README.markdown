@@ -4,11 +4,13 @@ A simple control-flow library for node.JS that makes parallel execution, serial 
 
 ## How to install
 
-Simply copy or link the lib/step.js file into your `$HOME/.node_libraries` folder.
+Simply copy or link the lib/step.js file into your `$HOME/.node_libraries` folder and `require("step");` like usual.
 
 ## How to use
 
-The step library exports a single function I call `Step`.  It accepts any number of functions as arguments and runs them in serial order using the passed in `this` context as the callback to the next step.
+### In serial
+
+The step library exports a single function called `Step`.  It accepts any number of functions as arguments and runs them in serial order using the passed in `this` context as the callback to the next step.
 
     Step(
       function readSelf() {
@@ -26,9 +28,11 @@ The step library exports a single function I call `Step`.  It accepts any number
 
 Notice that we pass in `this` as the callback to `fs.readFile`.  When the file read completes, step will send the result as the arguments to the next function in the chain.  Then in the `capitalize` function we're doing synchronous work so we can simple return the new value and Step will route it as if we called the callback.
 
-The first parameter is reserved for errors since this is the node standard.  Also any exceptions thrown are caught and passed as the first argument to the next function.  As long as you don't nest callback functions inline your main functions this prevents there from ever being any uncaught exceptions.  This is very important for long running node.JS servers since a single uncaught exception can bring the whole server down.
+The first parameter is reserved for errors since this is the node standard.  Also any exceptions thrown are caught and passed as the first argument to the next function.  As long as you don't nest callback functions inline your main functions this prevents there from ever being any uncaught exceptions.  This is very important for long running node.js servers since a single uncaught exception can bring the whole server down.
 
-Also there is support for parallel actions:
+### Parallel
+
+To run functions in parallel at any function (i.e. parallel execution can start on the third function), call the function `this.parallel()` at any point. The next
 
     Step(
       // Loads two files in parallel
